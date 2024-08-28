@@ -7,6 +7,7 @@ const Campground = require('./models/campground');
 const methodOverride = require('method-override');
 const ejsMate = require('ejs-mate');
 const catchAsync = require('./utils/wrapAround');
+const ExpressError = require('./utils/ExpressError');
 mongoose.connect('mongodb://localhost:27017/campdb', {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -56,7 +57,7 @@ app.put('/campgrounds/:id', catchAsync(async (req, res) => {
 }))
 app.post('/campgrounds', catchAsync(async (req, res) => {
 
-
+    if (!req.body.campground) throw new ExpressError('Invalid Data', 400);
     const campgrounds = new Campground(req.body.campground);
     await campgrounds.save();
     res.redirect(`/campgrounds/${campgrounds._id}`)
@@ -80,8 +81,13 @@ app.get('/campgrounds/:id', catchAsync(async (req, res) => {
 }))
 
 
+app.all('*', (req, res, next) => {
+    next(new ExpressError('Page Not Found', 404));
+})
+
 app.use((err, req, res, next) => {
-    res.status(404).send("Oh maaaaaaaan!");
+    const { statusCode = 500, message = "Something Went Wrong !" } = err;
+    res.status(statusCode).send(message);
     //res.send("Oh man !")
 })
 
