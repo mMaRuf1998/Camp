@@ -8,6 +8,8 @@ const methodOverride = require('method-override');
 const ejsMate = require('ejs-mate');
 const catchAsync = require('./utils/wrapAround');
 const ExpressError = require('./utils/ExpressError');
+const Joi = require('joi');
+const { error } = require('console');
 mongoose.connect('mongodb://localhost:27017/campdb', {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -57,7 +59,24 @@ app.put('/campgrounds/:id', catchAsync(async (req, res) => {
 }))
 app.post('/campgrounds', catchAsync(async (req, res) => {
 
-    if (!req.body.campground) throw new ExpressError('Invalid Data', 400);
+    //if (!req.body.campground) throw new ExpressError('Invalid Data', 400);
+
+    const campgroundSchema = Joi.object({
+        campground: Joi.object({
+            title: Joi.string().required(),
+            price: Joi.number().required().min(0),
+            image: Joi.string().required(),
+            location: Joi.string().required(),
+            description: Joi.string().required()
+        }).required()
+    });
+    const { error } = campgroundSchema.validate(req.body);
+
+    if (error) {
+        const msg = error.details.map(el => el.message).join('.')
+        throw new ExpressError(msg, 400);
+    }
+    console.log(result);
     const campgrounds = new Campground(req.body.campground);
     await campgrounds.save();
     res.redirect(`/campgrounds/${campgrounds._id}`)
@@ -86,8 +105,11 @@ app.all('*', (req, res, next) => {
 })
 
 app.use((err, req, res, next) => {
-    const { statusCode = 500, message = "Something Went Wrong !" } = err;
-    res.status(statusCode).send(message);
+    const { statusCode = 500 } = err;
+    //res.status(statusCode).send(message);
+    if (!err.message)
+        err.message = "Oh No , Something Went Wrong !";
+    res.status(statusCode).render('error', { err });
     //res.send("Oh man !")
 })
 
