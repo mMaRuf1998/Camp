@@ -25,16 +25,23 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 
+function wrapAround(fn) {
+    return function (req, res, next) {
+        fn(req, res, next).catch((e) => {
+            next(e);
+        })
 
+    }
+}
 
 app.get('/', (req, res) => {
     res.render('home');
 })
 
-app.get('/campgrounds', async (req, res) => {
+app.get('/campgrounds', wrapAround(async (req, res) => {
     const campgrounds = await Campground.find({});
     res.render('campgrounds/index', { campgrounds });
-})
+}))
 
 app.get('/campgrounds/new', (req, res) => {
     res.render("campgrounds/new");
@@ -42,12 +49,12 @@ app.get('/campgrounds/new', (req, res) => {
 })
 
 
-app.get('/campgrounds/:id/edit', async (req, res) => {
+app.get('/campgrounds/:id/edit', wrapAround(async (req, res) => {
     const { id } = req.params;
     const campground = await Campground.findById(id);
     res.render('campgrounds/edit', { campground });
 
-})
+}))
 app.put('/campgrounds/:id', async (req, res) => {
     const { id } = req.params;
     const campgrounds = await Campground.findByIdAndUpdate(id, { ...req.body.campground });
@@ -79,7 +86,10 @@ app.get('/campgrounds/:id', async (req, res) => {
 })
 
 
-
+app.use((err, req, res, next) => {
+    res.status(404).send("Oh maaaaaaaan!");
+    //res.send("Oh man !")
+})
 
 
 
