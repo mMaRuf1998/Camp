@@ -12,9 +12,9 @@ const campgrounds = require("./routes/campgrounds");
 const reviews = require("./routes/reviews");
 
 mongoose.connect('mongodb://localhost:27017/campdb', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
+
 })
+
 
 const db = mongoose.connection;
 
@@ -26,11 +26,12 @@ db.once("open", () => {
 app.engine('ejs', ejsMate);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+
+app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 app.use("/campgrounds", campgrounds);
 app.use("/campgrounds/:id/reviews", reviews);
-
 app.get('/', (req, res) => {
     res.render('home');
 })
