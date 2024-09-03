@@ -21,6 +21,7 @@ const validateCampground = (req, res, next) => {
 
 
 router.get('/', catchAsync(async (req, res) => {
+    const campgrounds = await Campground.find({});
     res.render('campgrounds/index', { campgrounds });
 }))
 
@@ -41,10 +42,10 @@ router.put('/:id', validateCampground, catchAsync(async (req, res) => {
     const campgrounds = await Campground.findByIdAndUpdate(id, { ...req.body.campground });
     res.redirect(`/campgrounds/${campgrounds._id}`);
 }))
-router.post('/', validateCampground, catchAsync(async (req, res) => {
-
+router.post('/', validateCampground, catchAsync(async (req, res, next) => {
     const campgrounds = new Campground(req.body.campground);
     await campgrounds.save();
+    req.flash('success', 'Successfully added a new Campground !');
     res.redirect(`/campgrounds/${campgrounds._id}`)
 
 
