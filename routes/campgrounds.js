@@ -34,12 +34,18 @@ router.get('/new', (req, res) => {
 router.get('/:id/edit', catchAsync(async (req, res) => {
     const { id } = req.params;
     const campground = await Campground.findById(id);
+    if (!campground) {
+        req.flash('error', "Campground not found !")
+        return res.redirect('/campgrounds');
+    }
     res.render('campgrounds/edit', { campground });
 
 }))
 router.put('/:id', validateCampground, catchAsync(async (req, res) => {
     const { id } = req.params;
     const campgrounds = await Campground.findByIdAndUpdate(id, { ...req.body.campground });
+    req.flash('success', 'Successfully updated a new Campground !');
+
     res.redirect(`/campgrounds/${campgrounds._id}`);
 }))
 router.post('/', validateCampground, catchAsync(async (req, res, next) => {
@@ -56,6 +62,8 @@ router.delete('/:id', catchAsync(async (req, res) => {
 
     const { id } = req.params;
     const campground = await Campground.findByIdAndDelete(id);
+    req.flash('error', 'Successfully deleted a new Campground !');
+
     res.redirect("/campgrounds");
 
 
@@ -65,7 +73,10 @@ router.delete('/:id', catchAsync(async (req, res) => {
 router.get('/:id', catchAsync(async (req, res) => {
     const { id } = req.params;
     const campground = await Campground.findById(id).populate('reviews');
-    //console.log(campground)
+    if (!campground) {
+        req.flash('error', "Campground not found !")
+        return res.redirect('/campgrounds');
+    }
     res.render("campgrounds/show", { campground });
 }))
 
