@@ -4,7 +4,7 @@ const catchAsync = require('../utils/wrapAround');
 const ExpressError = require('../utils/ExpressError');
 const Campground = require('../models/campground');
 const { campgroundSchema } = require('../schemas');
-
+const {isLoggedIn} = require("../middleware")
 
 const validateCampground = (req, res, next) => {
     const { error } = campgroundSchema.validate(req.body);
@@ -25,9 +25,10 @@ router.get('/', catchAsync(async (req, res) => {
     res.render('campgrounds/index', { campgrounds });
 }))
 
-router.get('/new', (req, res) => {
+router.get('/new', isLoggedIn , (req, res) => {
+   
     res.render("campgrounds/new");
-
+     
 })
 
 
@@ -41,14 +42,14 @@ router.get('/:id/edit', catchAsync(async (req, res) => {
     res.render('campgrounds/edit', { campground });
 
 }))
-router.put('/:id', validateCampground, catchAsync(async (req, res) => {
+router.put('/:id', validateCampground, isLoggedIn,  catchAsync(async (req, res) => {
     const { id } = req.params;
     const campgrounds = await Campground.findByIdAndUpdate(id, { ...req.body.campground });
     req.flash('success', 'Successfully updated a new Campground !');
 
     res.redirect(`/campgrounds/${campgrounds._id}`);
 }))
-router.post('/', validateCampground, catchAsync(async (req, res, next) => {
+router.post('/', validateCampground, isLoggedIn , catchAsync(async (req, res, next) => {
     const campgrounds = new Campground(req.body.campground);
     await campgrounds.save();
     req.flash('success', 'Successfully added a new Campground !');
@@ -58,7 +59,7 @@ router.post('/', validateCampground, catchAsync(async (req, res, next) => {
 }))
 
 
-router.delete('/:id', catchAsync(async (req, res) => {
+router.delete('/:id', isLoggedIn , catchAsync(async (req, res) => {
 
     const { id } = req.params;
     const campground = await Campground.findByIdAndDelete(id);
@@ -70,7 +71,7 @@ router.delete('/:id', catchAsync(async (req, res) => {
 }))
 
 
-router.get('/:id', catchAsync(async (req, res) => {
+router.get('/:id' , catchAsync(async (req, res) => {
     const { id } = req.params;
     const campground = await Campground.findById(id).populate('reviews');
     if (!campground) {
