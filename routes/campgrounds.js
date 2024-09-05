@@ -32,7 +32,7 @@ router.get('/new', isLoggedIn , (req, res) => {
 })
 
 
-router.get('/:id/edit', catchAsync(async (req, res) => {
+router.get('/:id/edit',isLoggedIn ,  catchAsync(async (req, res) => {
     const { id } = req.params;
     const campground = await Campground.findById(id);
     if (!campground) {
