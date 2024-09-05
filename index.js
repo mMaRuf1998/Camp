@@ -12,8 +12,9 @@ const { error } = require('console');
 const passport = require('passport') ;
 const LocalStrategy = require("passport-local")
 const User = require('./models/user')
-const campgrounds = require("./routes/campgrounds");
-const reviews = require("./routes/reviews");
+const campgroundRoutes = require("./routes/campgrounds");
+const reviewRoutes = require("./routes/reviews");
+const userRoutes = require("./routes/users");
 
 mongoose.connect('mongodb://localhost:27017/campdb', {
 
@@ -63,22 +64,15 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 
 
-
-app.use("/campgrounds", campgrounds);
-app.use("/campgrounds/:id/reviews", reviews);
-
-
+app.use("/", userRoutes);
+app.use("/campgrounds", campgroundRoutes);
+app.use("/campgrounds/:id/reviews", reviewRoutes);
 
 
-app.get("/fakeuser" ,async (req,res)=>{
-    const user = new User({
-        email:'Marufhsmed@gmail.com' ,
-        username: "Maruff" , 
-    })
 
-    const newUser = await User.register(user,"122333") ;
-    res.send(newUser) ;
-})
+
+
+
 
 app.get('/', (req, res) => {
     res.render('home');
