@@ -5,6 +5,8 @@ const ExpressError = require('../utils/ExpressError');
 const Campground = require('../models/campground');
 const { campgroundSchema } = require('../schemas');
 const {isLoggedIn} = require("../middleware")
+const campgrounds = require("../controllers/campgrounds")
+
 
 const validateCampground = (req, res, next) => {
     const { error } = campgroundSchema.validate(req.body);
@@ -20,10 +22,7 @@ const validateCampground = (req, res, next) => {
 
 
 
-router.get('/', catchAsync(async (req, res) => {
-    const campgrounds = await Campground.find({});
-    res.render('campgrounds/index', { campgrounds });
-}))
+router.get('/', catchAsync(campgrounds.index))
 
 router.get('/new', isLoggedIn , (req, res) => {
    
