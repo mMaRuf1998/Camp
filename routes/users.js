@@ -19,5 +19,4 @@ router.post("/login" , storeReturnTo ,
 
 router.get("/logout",users.logout)
     
-
 module.exports = router
