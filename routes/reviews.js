@@ -6,12 +6,12 @@ const catchAsync = require('../utils/wrapAround');
 const ExpressError = require('../utils/ExpressError');
 const { reviewSchema } = require('../schemas');
 const reviews = require("../controllers/reviews")
-const {validateReview} = require("../middleware") 
+const {validateReview , isLoggedIn , isAuthor , isReviewAuthor} = require("../middleware") 
 
 
-router.post('/', validateReview, catchAsync(reviews.createReview))
+router.post('/', isLoggedIn , validateReview, catchAsync(reviews.createReview))
 
-router.delete('/:reviewId', catchAsync(reviews.deleteReview))
+router.delete('/:reviewId',isLoggedIn , isReviewAuthor , catchAsync(reviews.deleteReview))
 
 
 module.exports = router;
