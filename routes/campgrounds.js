@@ -9,7 +9,8 @@ const {isAuthor} = require("../middleware")
 const {validateCampground} = require("../middleware")
 const campgrounds = require("../controllers/campgrounds")
 const multer  = require('multer')
-const upload = multer({ dest: 'uploads/' })
+const {storage} = require("../cloudinary/index")
+const upload = multer({ storage })
 
 
 
