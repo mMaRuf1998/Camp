@@ -72,7 +72,7 @@ const scriptSrcUrls = [
 
 const styleSrcUrls = [
     "https://kit-free.fontawesome.com/",
-    "https://stackpath.bootstrapcdn.com/",
+    "https://cdn.jsdelivr.net/",
     "https://api.mapbox.com/",
     "https://api.tiles.mapbox.com/",
     "https://fonts.googleapis.com/",
@@ -98,7 +98,7 @@ app.use(helmet.contentSecurityPolicy({
             "'self'",
             "blob:",
             "data:",
-            "https://res.cloudinary.com/dl845kosw/", //SHOULD MATCH YOUR CLOUDINARY ACCOUNT! 
+            "https://res.cloudinary.com/dl845kosw/",
             "https://images.unsplash.com/",
         ],
         fontSrc: ["'self'", ...fontSrcUrls],
@@ -121,7 +121,7 @@ app.use(
                 "'self'",
                 "blob:",
                 "data:",
-                "https://res.cloudinary.com/douqbebwk/", //SHOULD MATCH YOUR CLOUDINARY ACCOUNT! 
+                "https://res.cloudinary.com/dl845kosw/",
                 "https://images.unsplash.com/",
             ],
             fontSrc: ["'self'", ...fontSrcUrls],
