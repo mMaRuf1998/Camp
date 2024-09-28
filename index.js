@@ -1,8 +1,11 @@
 
+if(process.env.NODE_ENV!=="production"){
 require('dotenv').config() ;
+}
 
 
-console.log(process.env.secret) ; 
+
+//console.log(process.env.secret) ; 
 
 const express = require('express');
 const path = require('path');
@@ -22,11 +25,14 @@ const campgroundRoutes = require("./routes/campgrounds");
 const reviewRoutes = require("./routes/reviews");
 const userRoutes = require("./routes/users");
 const mongoSanitize = require('express-mongo-sanitize');
-const helmet = require("helmet") 
+const helmet = require("helmet")
 
-mongoose.connect('mongodb://localhost:27017/campdb', {
+const MongoDBStore = require("connect-mongo");
 
-})
+const dbUrl = "mongodb://localhost:27017/campdb" ;
+
+mongoose.connect(dbUrl, {})
+//mongoose.connect(dbUrl, {})
 
 
 const db = mongoose.connection;
@@ -40,7 +46,23 @@ app.engine('ejs', ejsMate);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+
+
+const store = MongoDBStore.create({
+      mongoUrl : dbUrl ,
+      secret: "thisissecret",
+      touchAfter: 3600*24 ,
+
+    
+}) ; 
+
+store.on("error" , function(e){
+    console.log("Session Store Error",e)
+})
+
+
 const sessionConfig = {
+    store ,  
     name : "YelpSession" , 
     secret: "thisissecret",
     resave: false,
@@ -57,6 +79,27 @@ const sessionConfig = {
 
 
 app.use(session(sessionConfig));
+
+
+
+
+/*
+app.use(session({ store: MongoDBStore.create({ mongoUrl: dbUrl,
+    
+    name : "YelpSession" , 
+    secret: "thisissecret",
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        httpOnly: true,
+        //secure:true ,
+        expires: Date.now() + 1000 * 3600 * 24 * 7,
+        maxAge: 1000 * 3600 * 24 * 7
+    }
+
+})}));
+
+*/
 
 app.use(flash());
 app.use(helmet()) ;
@@ -77,6 +120,7 @@ const styleSrcUrls = [
     "https://api.tiles.mapbox.com/",
     "https://fonts.googleapis.com/",
     "https://use.fontawesome.com/",
+    "https://stackpath.bootstrapcdn.com/"
 ];
 
 const connectSrcUrls = [
