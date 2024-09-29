@@ -29,8 +29,8 @@ const helmet = require("helmet")
 
 const MongoDBStore = require("connect-mongo");
 
-const dbUrl = "mongodb://localhost:27017/campdb" ;
-
+const dbUrl = process.env.DB_URL||"mongodb://localhost:27017/campdb" ;
+const secret = process.env.SECRET || "thisissecret"
 mongoose.connect(dbUrl, {})
 //mongoose.connect(dbUrl, {})
 
@@ -50,7 +50,7 @@ app.set('views', path.join(__dirname, 'views'));
 
 const store = MongoDBStore.create({
       mongoUrl : dbUrl ,
-      secret: "thisissecret",
+      secret ,
       touchAfter: 3600*24 ,
 
     
@@ -64,7 +64,7 @@ store.on("error" , function(e){
 const sessionConfig = {
     store ,  
     name : "YelpSession" , 
-    secret: "thisissecret",
+    secret,
     resave: false,
     saveUninitialized: true,
     cookie: {
