@@ -4,7 +4,7 @@
 
 <h2>🚀 Demo</h2>
 
-[https://camp-7wqh.onrender.com/campgrounds](https://camp-7wqh.onrender.com/campgrounds)
+[https://camp-7wqh.onrender.com/](https://camp-7wqh.onrender.com/)
 
   
   
