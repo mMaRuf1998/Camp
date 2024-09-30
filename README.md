@@ -1,6 +1,6 @@
 <h1 align="center" id="title">Campgrounds</h1>
 
-<p id="description">A full-stack web application built using Node.js Express MongoDB and EJS. The app allows users to discover create review and rate campgrounds across various locations. It also features user authentication and authorization along with integration with the MapBox API for geolocation.</p>
+<p id="description">A web application built using Node.js Express MongoDB and EJS. The app allows users to discover create review and rate campgrounds across various locations. It also features user authentication and authorization along with integration with the MapBox API for geolocation.</p>
 
 <h2>🚀 Demo</h2>
 
